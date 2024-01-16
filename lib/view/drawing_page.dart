@@ -14,6 +14,7 @@ class DrawingPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     final selectedColor = useState(Colors.black);
     final strokeSize = useState<double>(10);
     final eraserSize = useState<double>(30);
@@ -25,20 +26,22 @@ class DrawingPage extends HookWidget {
     final canvasGlobalKey = GlobalKey();
 
     ValueNotifier<Sketch?> currentSketch = useState<Sketch?>(null);
-    ValueNotifier<List<Sketch>> allSketches = useState<List<Sketch>>(
-        List.generate(
-            200,
-            (index) => Sketch(
-                points: List.generate(
-                    20,
-                    (index) =>
-                        Offset(index.toDouble() * 10, index.toDouble() * 10)),
-                color: Colors.black,
-                size: 3)));
+    ValueNotifier<List<Sketch>> allSketches = useState<List<Sketch>>([]);
+    ValueNotifier<Sketch?> tempSketch = useState<Sketch?>(null);
+    // ValueNotifier<List<Sketch>> allSketches = useState<List<Sketch>>(
+    //     List.generate(
+    //         200,
+    //         (index) => Sketch(
+    //             points: List.generate(
+    //                 20,
+    //                 (index) =>
+    //                     Offset(index.toDouble() * 10, index.toDouble() * 10)),
+    //             color: Colors.black,
+    //             size: 3)));
 
     final animationController = useAnimationController(
       duration: const Duration(milliseconds: 150),
-      initialValue: 1,
+      initialValue: 0,
     );
 
     return Scaffold(
@@ -47,8 +50,8 @@ class DrawingPage extends HookWidget {
           children: [
             Container(
               color: kCanvasColor,
-              width: double.maxFinite,
-              height: double.maxFinite,
+              width: size.width,
+              height: size.height - kToolbarHeight,
               child: DrawingCanvas(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
@@ -62,6 +65,7 @@ class DrawingPage extends HookWidget {
                 canvasGlobalKey: canvasGlobalKey,
                 filled: filled,
                 polygonSides: polygonSides,
+                tempSketch: tempSketch,
                 backgroundImage: backgroundImage,
               ),
             ),
@@ -99,6 +103,7 @@ class DrawingPage extends HookWidget {
                       filled: filled,
                       polygonSides: polygonSides,
                       backgroundImage: backgroundImage,
+                      tempSketch: tempSketch,
                     ),
                   )
                 ],

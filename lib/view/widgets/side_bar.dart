@@ -24,6 +24,7 @@ class SideBar extends HookWidget {
   final ValueNotifier<DrawingMode> drawingMode;
   final ValueNotifier<Sketch?> currentSketch;
   final ValueNotifier<List<Sketch>> allSketches;
+  final ValueNotifier<Sketch?> tempSketch;
   final GlobalKey canvasGlobalKey;
   final ValueNotifier<bool> filled;
   final ValueNotifier<int> polygonSides;
@@ -41,6 +42,7 @@ class SideBar extends HookWidget {
     required this.filled,
     required this.polygonSides,
     required this.backgroundImage,
+    required this.tempSketch,
   }) : super(key: key);
 
   @override
@@ -49,6 +51,7 @@ class SideBar extends HookWidget {
       _UndoRedoStack(
         sketchesNotifier: allSketches,
         currentSketchNotifier: currentSketch,
+        tempSketch: tempSketch,
       ),
     );
     final scrollController = useScrollController();
@@ -430,15 +433,16 @@ class _IconBox extends StatelessWidget {
 
 ///A data structure for undoing and redoing sketches.
 class _UndoRedoStack {
-  _UndoRedoStack({
-    required this.sketchesNotifier,
-    required this.currentSketchNotifier,
-  }) {
+  _UndoRedoStack(
+      {required this.sketchesNotifier,
+      required this.currentSketchNotifier,
+      required this.tempSketch}) {
     _sketchCount = sketchesNotifier.value.length;
     sketchesNotifier.addListener(_sketchesCountListener);
   }
 
   final ValueNotifier<List<Sketch>> sketchesNotifier; //all sketches
+  final ValueNotifier<Sketch?> tempSketch; //all sketches
   final ValueNotifier<Sketch?> currentSketchNotifier; //current sketch
 
   ///Collection of sketches that can be redone.
@@ -462,6 +466,7 @@ class _UndoRedoStack {
 
   void clear() {
     _sketchCount = 0;
+    tempSketch.value = null;
     sketchesNotifier.value = [];
     _canRedo.value = false;
     currentSketchNotifier.value = null;
