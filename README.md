@@ -1,3 +1,3 @@
 # flutter_draw_appp
 
-A new Flutter project.
+Flutter Draw App allows users to collaboratively draw online in real-time. Customize brushes, select colors, and share your creations seamlessly with others
